@@ -1,0 +1,13 @@
+{
+  "num_samples": 691,
+  "image_shape": [
+    60,
+    60,
+    3
+  ],
+  "num_features": 16,
+  "class_balance": {
+    "num_zeros": 351,
+    "num_ones": 340
+  }
+}
