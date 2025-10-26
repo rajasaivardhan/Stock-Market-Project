@@ -165,7 +165,9 @@ def build_dataset(
     image_size: int,
     channel_features: List[str],
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    gaf = GramianAngularField(image_size=image_size, method='summation')
+    # Ensure image_size <= window_size to satisfy pyts requirement
+    eff_image_size = min(int(image_size), int(window_size))
+    gaf = GramianAngularField(image_size=eff_image_size, method='summation')
 
     # Prepare sliding indices and labels
     _, y, _ = make_windows(df, window_size=window_size, horizon=horizon, step_size=step_size)
@@ -235,6 +237,7 @@ if __name__ == "__main__":
     parser.add_argument('--img_size', type=int, default=64, help='GASF image size (pixels)')
     parser.add_argument('--channels', type=str, default='Close,RSI_14,MACD', help='Comma-separated features for GASF channels')
     parser.add_argument('--out_dir', type=str, default='IMD_Project/GASF_images', help='Output directory for npy files (relative to repo root)')
+    parser.add_argument('--csv_path', type=str, default=None, help='Optional: path to CSV with columns Date,Open,High,Low,Close,Volume')
     args = parser.parse_args()
 
     # Prepare directories
@@ -243,9 +246,18 @@ if __name__ == "__main__":
         out_dir = os.path.join(os.getcwd(), out_dir)
     os.makedirs(out_dir, exist_ok=True)
 
-    print(f"Downloading {args.ticker} from {args.start} to {args.end} ...")
-    raw = download_data(args.ticker, args.start, args.end)
-    print(f"Downloaded {len(raw)} rows")
+    if args.csv_path:
+        import pandas as pd
+        print(f"Loading CSV from {args.csv_path} ...")
+        raw = pd.read_csv(args.csv_path)
+        if 'Date' in raw.columns:
+            raw['Date'] = pd.to_datetime(raw['Date'])
+            raw = raw.sort_values('Date').set_index('Date')
+        print(f"Loaded {len(raw)} rows from CSV")
+    else:
+        print(f"Downloading {args.ticker} from {args.start} to {args.end} ...")
+        raw = download_data(args.ticker, args.start, args.end)
+        print(f"Downloaded {len(raw)} rows")
 
     print("Computing indicators ...")
     df = compute_technical_indicators(raw)

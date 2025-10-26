@@ -82,7 +82,7 @@ def main(args):
     os.makedirs(os.path.dirname(args.model_path), exist_ok=True)
     model.save(args.model_path)
     saved_model_dir = os.path.join(os.path.dirname(args.model_path), 'saved_model')
-    model.save(saved_model_dir)
+    model.export(saved_model_dir)
 
     # Evaluate quick
     test_metrics = model.evaluate([Xi_te, Xf_te], y_te, verbose=0)

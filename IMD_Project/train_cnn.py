@@ -109,7 +109,8 @@ def main(args):
     h5_path = os.path.join(models_dir, 'model_cnn.h5')
     model.save(h5_path)
     saved_model_dir = os.path.join(models_dir, 'saved_model')
-    model.save(saved_model_dir)
+    # Keras 3: export SavedModel for TF Serving/TFLite
+    model.export(saved_model_dir)
 
     # Evaluate on test set for quick feedback
     test_results = model.evaluate([Xi_te, Xf_te], y_te, verbose=0)
