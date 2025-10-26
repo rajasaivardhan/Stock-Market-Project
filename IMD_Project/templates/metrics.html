@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Metrics - Stock GASF Predictor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background: #0f172a; color: #e2e8f0; }
+    .card { background: #111827; border: 1px solid #1f2937; }
+    .accent { color: #60a5fa; }
+    img.plot { max-width: 100%; border-radius: 8px; border: 1px solid #1f2937; }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="accent">Model Metrics</h2>
+      <a class="btn btn-outline-light" href="/">Back</a>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="card p-4 h-100">
+          <h5>Summary</h5>
+          {% if metrics %}
+            <p>Accuracy: <strong>{{ '%.2f'|format(metrics.accuracy * 100) }}%</strong></p>
+            <p>Precision: <strong>{{ '%.2f'|format(metrics.precision * 100) }}%</strong></p>
+            <p>Recall: <strong>{{ '%.2f'|format(metrics.recall * 100) }}%</strong></p>
+            <p>F1-score: <strong>{{ '%.2f'|format(metrics.f1 * 100) }}%</strong></p>
+          {% else %}
+            <p class="text-muted">Metrics not found. Run evaluation.</p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card p-4 h-100">
+          <h5>Curves</h5>
+          <div class="row">
+            <div class="col-12 mb-3"><img class="plot" src="/static/plots/accuracy_curve.png" alt="Accuracy Curve" onerror="this.style.display='none'"/></div>
+            <div class="col-12 mb-3"><img class="plot" src="/static/plots/pred_vs_actual.png" alt="Pred vs Actual" onerror="this.style.display='none'"/></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-12">
+        <div class="card p-4">
+          <h5>Confusion Matrix</h5>
+          <img class="plot" src="/static/plots/confusion_matrix.png" alt="Confusion Matrix" onerror="this.style.display='none'"/>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
